@@ -1,7 +1,6 @@
-##shyli - Share your library
+## shyli - Share your library
 
-[![Build Status](https://travis-ci.com/onkelsmo/shyli.svg?branch=master)]
-(https://travis-ci.com/onkelsmo/shyli)
+[![Build Status](https://travis-ci.com/onkelsmo/shyli.svg?branch=master)](https://travis-ci.com/onkelsmo/shyli)
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
