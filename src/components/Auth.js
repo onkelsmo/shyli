@@ -12,11 +12,7 @@ class Auth extends React.Component {
   onSubmit = () => {
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
-        /* console.log(this.props.form.getFieldsValue()) */
-        /* console.log(this.props)
-        console.log(this.state) */
         this.props.handleStateChange(this.props.form.getFieldsValue())
-        // this.setState({ auth: {} })
       } else {
         alert('Validation failed')
       }
@@ -62,12 +58,8 @@ class Auth extends React.Component {
           >
             Username
           </InputItem>
-          <InputItem
-            {...getFieldProps('password')}
-            placeholder='please input password'
-            type='password'
-          >
-            Password
+          <InputItem {...getFieldProps('pin')} placeholder='please input pin'>
+            Pin
           </InputItem>
 
           <Item>

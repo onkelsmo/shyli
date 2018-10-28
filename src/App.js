@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { Drawer, List, NavBar, Icon, WhiteSpace, Button } from 'antd-mobile'
 import Auth from './components/Auth'
 import './App.css'
+import firebase from 'firebase'
+import 'firebase/database'
+import { DB_CONFIG } from './Config'
 
 class App extends Component {
   state = {
@@ -10,6 +13,13 @@ class App extends Component {
       name: '',
       pin: ''
     }
+  }
+
+  constructor () {
+    super()
+
+    this.app = firebase.initializeApp(DB_CONFIG)
+    this.database = this.app.database()
   }
 
   componentDidMount () {
@@ -116,12 +126,22 @@ class App extends Component {
     this.setState({
       auth: {
         name: props.username,
-        pin: props.password
+        pin: props.pin
       }
+    })
+
+    firebase.database().ref('users/' + props.username + props.pin).set({
+      name: props.username,
+      pin: props.pin
     })
   }
 
   handleReset () {
+    firebase
+      .database()
+      .ref('users/' + this.state.auth.name + this.state.auth.pin)
+      .set(null)
+
     this.setState({
       auth: {
         name: '',
