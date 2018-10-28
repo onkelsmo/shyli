@@ -17,16 +17,12 @@ class App extends Component {
 
   constructor () {
     super()
-
     this.app = firebase.initializeApp(DB_CONFIG)
     this.database = this.app.database()
   }
 
   componentDidMount () {
     this.hydrateStateWithLocalStorage()
-
-    // add event listener to save state to localStorage
-    // when user leaves/refreshes the page
     window.addEventListener(
       'beforeunload',
       this.saveStateToLocalStorage.bind(this)
@@ -38,25 +34,17 @@ class App extends Component {
       'beforeunload',
       this.saveStateToLocalStorage.bind(this)
     )
-
-    // saves if component has a chance to unmount
     this.saveStateToLocalStorage()
   }
 
   hydrateStateWithLocalStorage () {
-    // for all items in state
     for (let key in this.state) {
-      // if the key exists in localStorage
       if (localStorage.hasOwnProperty(key)) {
-        // get the key's value from localStorage
         let value = localStorage.getItem(key)
-
-        // parse the localStorage string and setState
         try {
           value = JSON.parse(value)
           this.setState({ [key]: value })
         } catch (e) {
-          // handle empty string
           this.setState({ [key]: value })
         }
       }
@@ -64,9 +52,7 @@ class App extends Component {
   }
 
   saveStateToLocalStorage () {
-    // for every item in React state
     for (let key in this.state) {
-      // save to localStorage
       localStorage.setItem(key, JSON.stringify(this.state[key]))
     }
   }
@@ -77,27 +63,14 @@ class App extends Component {
   }
 
   renderSidebar () {
-    // Here comes the category data from db
+    let categoryArray = []
+    this.database.ref('categories/').on('value', snapshot => {
+      categoryArray = snapshot.val()
+    })
+
     return (
       <List>
-        {[
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ].map((i, index) => {
+        {categoryArray.map((i, index) => {
           if (index === 0) {
             return (
               <List.Item
@@ -105,7 +78,7 @@ class App extends Component {
                 thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
                 multipleLine
               >
-                Category
+                {categoryArray[index]}
               </List.Item>
             )
           }
@@ -114,7 +87,7 @@ class App extends Component {
               key={index}
               thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
             >
-              Category{index}
+              {categoryArray[index]}
             </List.Item>
           )
         })}
