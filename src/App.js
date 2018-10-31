@@ -1,13 +1,5 @@
 import React, { Component } from 'react'
-import {
-  Drawer,
-  List,
-  NavBar,
-  Icon,
-  WhiteSpace,
-  Button,
-  Modal
-} from 'antd-mobile'
+import { Drawer, NavBar, Icon, WhiteSpace, Modal, Toast } from 'antd-mobile'
 import Auth from './components/Auth'
 import Sidebar from './components/Sidebar'
 import './App.css'
@@ -67,12 +59,39 @@ class App extends Component {
   }
 
   onOpenChange = (...args) => {
-    console.log(args)
     this.setState({ open: !this.state.open })
   }
 
-  showConfirmationPopup () {
-    Modal.alert('Reset your Userdata', 'Are you sure???', [
+  showAddCategory () {
+    Modal.prompt(
+      'Add a new category',
+      null,
+      [
+        {
+          text: 'Close',
+          onPress: () => {
+            // this.setState({ open: false })
+          }
+        },
+        {
+          text: 'Add',
+          onPress: categoryName => {
+            if (!categoryName) {
+              Toast.info('The Category name must not be empty', 1)
+            } else {
+              this.handleCategoryAdd(categoryName)
+            }
+          }
+        }
+      ],
+      'default',
+      null,
+      ['category name']
+    )
+  }
+
+  showResetConfirmation () {
+    Modal.alert('Reset your userdata', 'Are you sure???', [
       {
         text: 'Cancel',
         onPress: () => {},
@@ -80,6 +99,25 @@ class App extends Component {
       },
       { text: 'OK', onPress: () => this.handleReset() }
     ])
+  }
+
+  handleCategoryAdd (categoryName) {
+    this.setState({
+      categories: categoryName
+    })
+
+    firebase
+      .database()
+      .ref(
+        'users/' +
+          this.state.auth.name +
+          this.state.auth.pin +
+          '/categories/' +
+          categoryName
+      )
+      .set({
+        name: categoryName
+      })
   }
 
   handleStateChange (props) {
@@ -112,12 +150,6 @@ class App extends Component {
   }
 
   render () {
-    const sidebar = (
-      <Sidebar
-        database={this.database}
-        showConfirmationPopup={this.showConfirmationPopup.bind(this)}
-      />
-    )
     let isAuth = this.state.auth.name !== '' && this.state.auth.pin !== ''
 
     return (
@@ -125,30 +157,38 @@ class App extends Component {
         <NavBar icon={<Icon type='ellipsis' />} onLeftClick={this.onOpenChange}>
           shyli
         </NavBar>
-        <Drawer
-          className='my-drawer'
-          style={{ minHeight: document.documentElement.clientHeight }}
-          enableDragHandle
-          contentStyle={{
-            color: '#A6A6A6',
-            textAlign: 'center',
-            paddingTop: 42
-          }}
-          sidebar={sidebar}
-          open={this.state.open}
-          onOpenChange={this.onOpenChange}
-        >
-          {!isAuth &&
-            <Auth handleStateChange={this.handleStateChange.bind(this)} />}
-          {isAuth &&
+        {!isAuth &&
+          <Auth handleStateChange={this.handleStateChange.bind(this)} />}
+        {isAuth &&
+          <Drawer
+            className='my-drawer'
+            style={{ minHeight: document.documentElement.clientHeight }}
+            enableDragHandle
+            contentStyle={{
+              color: '#A6A6A6',
+              textAlign: 'center',
+              paddingTop: 42
+            }}
+            sidebar={
+              <Sidebar
+                name={this.state.auth.name}
+                pin={this.state.auth.pin}
+                database={this.database}
+                showResetConfirmation={this.showResetConfirmation.bind(this)}
+                showAddCategory={this.showAddCategory.bind(this)}
+              />
+            }
+            open={this.state.open}
+            onOpenChange={this.onOpenChange}
+          >
             <div>
               Hello {this.state.auth.name}
               <WhiteSpace />
               and thank you for using shyli :-)
               <WhiteSpace />
-              Now let's begin. Open the drawer on the left and start adding items and categories!
-            </div>}
-        </Drawer>
+              Now let's begin. Open the drawer on the left and start adding categories!
+            </div>
+          </Drawer>}
       </div>
     )
   }

@@ -2,15 +2,17 @@ import React from 'react'
 import { List, Button } from 'antd-mobile'
 
 const Sidebar = props => {
-  let categoryArray = []
-  props.database.ref('categories/').on('value', snapshot => {
-    categoryArray = snapshot.val()
+  let { name, pin, database, showAddCategory, showResetConfirmation } = props
+
+  let fetchedCategories = {}
+  database.ref('users/' + name + pin + '/categories/').on('value', snapshot => {
+    fetchedCategories = snapshot.val()
   })
 
   return (
-    <List>
-      {categoryArray &&
-        categoryArray.map((i, index) => {
+    <List renderHeader={() => 'Categories'}>
+      {fetchedCategories &&
+        Object.keys(fetchedCategories).map((i, index) => {
           if (index === 0) {
             return (
               <List.Item
@@ -18,7 +20,7 @@ const Sidebar = props => {
                 thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
                 multipleLine
               >
-                {categoryArray[index]}
+                {i}
               </List.Item>
             )
           }
@@ -27,17 +29,20 @@ const Sidebar = props => {
               key={index}
               thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
             >
-              {categoryArray[index]}
+              {i}
             </List.Item>
           )
         })}
+      <Button className='button-add' onClick={showAddCategory.bind(this)}>
+        New Category
+      </Button>
       <List renderHeader={() => 'Settings'}>
         <List.Item>
           <Button
             className='button-reset'
-            onClick={props.showConfirmationPopup.bind(this)}
+            onClick={showResetConfirmation.bind(this)}
           >
-            Reset Userdata
+            Reset userdata
           </Button>
         </List.Item>
       </List>
