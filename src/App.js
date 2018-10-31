@@ -9,6 +9,7 @@ import {
   Modal
 } from 'antd-mobile'
 import Auth from './components/Auth'
+import Sidebar from './components/Sidebar'
 import './App.css'
 import firebase from 'firebase'
 import 'firebase/database'
@@ -110,53 +111,13 @@ class App extends Component {
     })
   }
 
-  // TODO: this has to be a seperate component
-  renderSidebar () {
-    let categoryArray = []
-    this.database.ref('categories/').on('value', snapshot => {
-      categoryArray = snapshot.val()
-    })
-
-    return (
-      <List>
-        {categoryArray &&
-          categoryArray.map((i, index) => {
-            if (index === 0) {
-              return (
-                <List.Item
-                  key={index}
-                  thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-                  multipleLine
-                >
-                  {categoryArray[index]}
-                </List.Item>
-              )
-            }
-            return (
-              <List.Item
-                key={index}
-                thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-              >
-                {categoryArray[index]}
-              </List.Item>
-            )
-          })}
-        <List renderHeader={() => 'Settings'}>
-          <List.Item>
-            <Button
-              className='button-reset'
-              onClick={this.showConfirmationPopup.bind(this)}
-            >
-              Reset Userdata
-            </Button>
-          </List.Item>
-        </List>
-      </List>
-    )
-  }
-
   render () {
-    const sidebar = this.renderSidebar()
+    const sidebar = (
+      <Sidebar
+        database={this.database}
+        showConfirmationPopup={this.showConfirmationPopup.bind(this)}
+      />
+    )
     let isAuth = this.state.auth.name !== '' && this.state.auth.pin !== ''
 
     return (
@@ -181,9 +142,11 @@ class App extends Component {
             <Auth handleStateChange={this.handleStateChange.bind(this)} />}
           {isAuth &&
             <div>
-              {this.state.auth.name}
+              Hello {this.state.auth.name}
               <WhiteSpace />
-              {this.state.auth.pin}
+              and thank you for using shyli :-)
+              <WhiteSpace />
+              Now let's begin. Open the drawer on the left and start adding items and categories!
             </div>}
         </Drawer>
       </div>
