@@ -18,5 +18,10 @@
 }
 
 .am-drawer-draghandle {
-  background-color: transparent
+  background-color: transparent;
+}
+
+.button-reset {
+  background-color: crimson;
+  color: #ffffff;
 }

@@ -1,5 +1,13 @@
 import React, { Component } from 'react'
-import { Drawer, List, NavBar, Icon, WhiteSpace, Button } from 'antd-mobile'
+import {
+  Drawer,
+  List,
+  NavBar,
+  Icon,
+  WhiteSpace,
+  Button,
+  Modal
+} from 'antd-mobile'
 import Auth from './components/Auth'
 import './App.css'
 import firebase from 'firebase'
@@ -62,37 +70,15 @@ class App extends Component {
     this.setState({ open: !this.state.open })
   }
 
-  renderSidebar () {
-    let categoryArray = []
-    this.database.ref('categories/').on('value', snapshot => {
-      categoryArray = snapshot.val()
-    })
-
-    return (
-      <List>
-        {categoryArray.map((i, index) => {
-          if (index === 0) {
-            return (
-              <List.Item
-                key={index}
-                thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-                multipleLine
-              >
-                {categoryArray[index]}
-              </List.Item>
-            )
-          }
-          return (
-            <List.Item
-              key={index}
-              thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-            >
-              {categoryArray[index]}
-            </List.Item>
-          )
-        })}
-      </List>
-    )
+  showConfirmationPopup () {
+    Modal.alert('Reset your Userdata', 'Are you sure???', [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style: 'default'
+      },
+      { text: 'OK', onPress: () => this.handleReset() }
+    ])
   }
 
   handleStateChange (props) {
@@ -116,11 +102,57 @@ class App extends Component {
       .set(null)
 
     this.setState({
+      open: false,
       auth: {
         name: '',
         pin: ''
       }
     })
+  }
+
+  // TODO: this has to be a seperate component
+  renderSidebar () {
+    let categoryArray = []
+    this.database.ref('categories/').on('value', snapshot => {
+      categoryArray = snapshot.val()
+    })
+
+    return (
+      <List>
+        {categoryArray &&
+          categoryArray.map((i, index) => {
+            if (index === 0) {
+              return (
+                <List.Item
+                  key={index}
+                  thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
+                  multipleLine
+                >
+                  {categoryArray[index]}
+                </List.Item>
+              )
+            }
+            return (
+              <List.Item
+                key={index}
+                thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
+              >
+                {categoryArray[index]}
+              </List.Item>
+            )
+          })}
+        <List renderHeader={() => 'Settings'}>
+          <List.Item>
+            <Button
+              className='button-reset'
+              onClick={this.showConfirmationPopup.bind(this)}
+            >
+              Reset Userdata
+            </Button>
+          </List.Item>
+        </List>
+      </List>
+    )
   }
 
   render () {
@@ -152,7 +184,6 @@ class App extends Component {
               {this.state.auth.name}
               <WhiteSpace />
               {this.state.auth.pin}
-              <Button onClick={this.handleReset.bind(this)}>Reset</Button>
             </div>}
         </Drawer>
       </div>
