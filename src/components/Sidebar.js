@@ -2,7 +2,14 @@ import React from 'react'
 import { List, Button } from 'antd-mobile'
 
 const Sidebar = props => {
-  let { name, pin, database, showAddCategory, showResetConfirmation } = props
+  let {
+    name,
+    pin,
+    database,
+    showAddCategory,
+    showResetConfirmation,
+    setActiveCategory
+  } = props
 
   let fetchedCategories = {}
   database.ref('users/' + name + pin + '/categories/').on('value', snapshot => {
@@ -13,21 +20,11 @@ const Sidebar = props => {
     <List renderHeader={() => 'Categories'}>
       {fetchedCategories &&
         Object.keys(fetchedCategories).map((i, index) => {
-          if (index === 0) {
-            return (
-              <List.Item
-                key={index}
-                thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-                multipleLine
-              >
-                {i}
-              </List.Item>
-            )
-          }
           return (
             <List.Item
               key={index}
               thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
+              onClick={setActiveCategory.bind(null, i)}
             >
               {i}
             </List.Item>

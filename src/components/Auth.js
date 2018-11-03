@@ -43,7 +43,6 @@ class Auth extends React.Component {
         >
           <InputItem
             {...getFieldProps('username', {
-              // initialValue: 'little ant',
               rules: [
                 { required: true, message: 'Please input username' },
                 { validator: this.validateAccount }

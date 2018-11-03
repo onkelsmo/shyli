@@ -13,7 +13,9 @@ class App extends Component {
     auth: {
       name: '',
       pin: ''
-    }
+    },
+    categories: [],
+    activeCategory: null
   }
 
   constructor () {
@@ -62,6 +64,10 @@ class App extends Component {
     this.setState({ open: !this.state.open })
   }
 
+  setActiveCategory (categoryName) {
+    this.setState({ open: false, activeCategory: categoryName })
+  }
+
   showAddCategory () {
     Modal.prompt(
       'Add a new category',
@@ -102,9 +108,9 @@ class App extends Component {
   }
 
   handleCategoryAdd (categoryName) {
-    this.setState({
-      categories: categoryName
-    })
+    let categoriesArray = this.state.categories
+    categoriesArray.push(categoryName)
+    this.setState({ categories: categoriesArray })
 
     firebase
       .database()
@@ -145,12 +151,15 @@ class App extends Component {
       auth: {
         name: '',
         pin: ''
-      }
+      },
+      categories: [],
+      activeCategory: null
     })
   }
 
   render () {
     let isAuth = this.state.auth.name !== '' && this.state.auth.pin !== ''
+    let activeCategory = this.state.activeCategory
 
     return (
       <div>
@@ -176,18 +185,24 @@ class App extends Component {
                 database={this.database}
                 showResetConfirmation={this.showResetConfirmation.bind(this)}
                 showAddCategory={this.showAddCategory.bind(this)}
+                setActiveCategory={this.setActiveCategory.bind(this)}
               />
             }
             open={this.state.open}
             onOpenChange={this.onOpenChange}
           >
-            <div>
-              Hello {this.state.auth.name}
-              <WhiteSpace />
-              and thank you for using shyli :-)
-              <WhiteSpace />
-              Now let's begin. Open the drawer on the left and start adding categories!
-            </div>
+            {!activeCategory &&
+              <div>
+                Hello {this.state.auth.name}
+                <WhiteSpace />
+                and thank you for using shyli :-)
+                <WhiteSpace />
+                Now let's begin. Open the drawer on the left and start adding categories!
+              </div>}
+            {activeCategory &&
+              <div>
+                {this.state.activeCategory}
+              </div>}
           </Drawer>}
       </div>
     )
