@@ -206,6 +206,7 @@ class CategoryItemList extends React.Component {
           Clicked “{pageText}” tab， show “{pageText}” information
         </div>
         <a
+          href='# '
           style={{
             display: 'block',
             marginTop: 40,
