@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Drawer, NavBar, Icon, WhiteSpace, Modal, Toast } from 'antd-mobile'
 import Auth from './components/Auth'
 import Sidebar from './components/Sidebar'
+import CategoryItemList from './components/CategoryItemList'
 import './App.css'
 import firebase from 'firebase'
 import 'firebase/database'
@@ -201,7 +202,7 @@ class App extends Component {
               </div>}
             {activeCategory &&
               <div>
-                {this.state.activeCategory}
+                <CategoryItemList activeCategory={activeCategory} />
               </div>}
           </Drawer>}
       </div>
