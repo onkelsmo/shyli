@@ -16,7 +16,8 @@ class App extends Component {
       pin: ''
     },
     categories: [],
-    activeCategory: null
+    activeCategory: null,
+    items: {}
   }
 
   constructor () {
@@ -127,7 +128,7 @@ class App extends Component {
       })
   }
 
-  handleStateChange (props) {
+  handleAuth (props) {
     this.setState({
       auth: {
         name: props.username,
@@ -158,6 +159,29 @@ class App extends Component {
     })
   }
 
+  handleItemAdd (title, category) {
+    let itemsObject = this.state.items
+    itemsObject.category = { item: title }
+    this.setState({
+      items: itemsObject
+    })
+
+    firebase
+      .database()
+      .ref(
+        'users/' +
+          this.state.auth.name +
+          this.state.auth.pin +
+          '/categories/' +
+          category +
+          '/items/' +
+          title
+      )
+      .set({
+        title: title
+      })
+  }
+
   render () {
     let isAuth = this.state.auth.name !== '' && this.state.auth.pin !== ''
     let activeCategory = this.state.activeCategory
@@ -167,8 +191,7 @@ class App extends Component {
         <NavBar icon={<Icon type='ellipsis' />} onLeftClick={this.onOpenChange}>
           shyli
         </NavBar>
-        {!isAuth &&
-          <Auth handleStateChange={this.handleStateChange.bind(this)} />}
+        {!isAuth && <Auth handleAuth={this.handleAuth.bind(this)} />}
         {isAuth &&
           <Drawer
             className='my-drawer'
@@ -202,7 +225,10 @@ class App extends Component {
               </div>}
             {activeCategory &&
               <div>
-                <CategoryItemList activeCategory={activeCategory} />
+                <CategoryItemList
+                  activeCategory={activeCategory}
+                  handleItemAdd={this.handleItemAdd.bind(this)}
+                />
               </div>}
           </Drawer>}
       </div>

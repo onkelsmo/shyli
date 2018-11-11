@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { TabBar, ListView } from 'antd-mobile'
+import CreateItem from './CreateItem'
 
 const data = [
   {
@@ -193,37 +194,47 @@ class CategoryItemList extends React.Component {
     }
   }
 
-  renderContent (pageText) {
+  handleItemSubmit () {
+    this.setState({ selectedTab: 'blueTab' })
+  }
+
+  renderNewItem () {
     return (
-      <div
-        style={{
-          backgroundColor: 'white',
-          height: '100%',
-          textAlign: 'center'
-        }}
-      >
-        <div style={{ paddingTop: 60 }}>
-          Clicked “{pageText}” tab， show “{pageText}” information
-        </div>
-        <a
-          href='# '
-          style={{
-            display: 'block',
-            marginTop: 40,
-            marginBottom: 20,
-            color: '#108ee9'
-          }}
-          onClick={e => {
-            e.preventDefault()
-            this.setState({
-              hidden: !this.state.hidden
-            })
-          }}
-        >
-          Click to show/hide tab-bar
-        </a>
-      </div>
+      <CreateItem
+        handleItemAdd={this.props.handleItemAdd.bind(this)}
+        activeCategory={this.props.activeCategory}
+        handleItemSubmit={this.handleItemSubmit.bind(this)}
+      />
     )
+
+    // <div
+    //   style={{
+    //     backgroundColor: 'white',
+    //     height: '100%',
+    //     textAlign: 'center'
+    //   }}
+    // >
+    //   <div style={{ paddingTop: 60 }}>
+    //     Clicked “{pageText}” tab， show “{pageText}” information
+    //   </div>
+    //   <a
+    //     href='# '
+    //     style={{
+    //       display: 'block',
+    //       marginTop: 40,
+    //       marginBottom: 20,
+    //       color: '#108ee9'
+    //     }}
+    //     onClick={e => {
+    //       e.preventDefault()
+    //       this.setState({
+    //         hidden: !this.state.hidden
+    //       })
+    //     }}
+    //   >
+    //     Click to show/hide tab-bar
+    //   </a>
+    // </div>
   }
 
   render () {
@@ -261,7 +272,7 @@ class CategoryItemList extends React.Component {
               />
             }
             selected={this.state.selectedTab === 'blueTab'}
-            badge={1}
+            // badge={1}
             onPress={() => {
               this.setState({
                 selectedTab: 'blueTab'
@@ -292,7 +303,7 @@ class CategoryItemList extends React.Component {
             }
             title='New Item'
             key='NewItem'
-            badge={'new'}
+            // badge={'new'}
             selected={this.state.selectedTab === 'redTab'}
             onPress={() => {
               this.setState({
@@ -301,9 +312,9 @@ class CategoryItemList extends React.Component {
             }}
             data-seed='logId1'
           >
-            {this.renderContent('New Item')}
+            {this.renderNewItem()}
           </TabBar.Item>
-          <TabBar.Item
+          {/* <TabBar.Item
             icon={
               <div
                 style={{
@@ -333,24 +344,6 @@ class CategoryItemList extends React.Component {
             }}
           >
             {this.renderContent('NewSubCategory')}
-          </TabBar.Item>
-          {/* <TabBar.Item
-            icon={{
-              uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg'
-            }}
-            selectedIcon={{
-              uri: 'https://zos.alipayobjects.com/rmsportal/gjpzzcrPMkhfEqgbYvmN.svg'
-            }}
-            title='My'
-            key='my'
-            selected={this.state.selectedTab === 'yellowTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'yellowTab'
-              })
-            }}
-          >
-            {this.renderContent('My')}
           </TabBar.Item> */}
         </TabBar>
       </div>

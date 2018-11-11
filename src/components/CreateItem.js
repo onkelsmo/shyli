@@ -4,17 +4,15 @@ import { createForm } from 'rc-form'
 
 const Item = List.Item
 
-class Auth extends React.Component {
-  state = {
-    value: 1
-  }
-
+class CreateItem extends React.Component {
   onSubmit = () => {
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
-        this.props.handleAuth(this.props.form.getFieldsValue())
-      } else {
-        alert('Validation failed')
+        this.props.handleItemAdd(
+          this.props.form.getFieldsValue().title,
+          this.props.activeCategory
+        )
+        this.props.handleItemSubmit()
       }
     })
   }
@@ -23,11 +21,11 @@ class Auth extends React.Component {
     this.props.form.resetFields()
   }
 
-  validateAccount = (rule, value, callback) => {
-    if (value && value.length >= 3) {
+  validateTitle = (rule, value, callback) => {
+    if (value && value.length > 0) {
       callback()
     } else {
-      callback(new Error('At least four characters for account'))
+      callback(new Error('The title can not be empty'))
     }
   }
 
@@ -37,28 +35,25 @@ class Auth extends React.Component {
     return (
       <form>
         <List
-          renderHeader={() => 'Please provide me with a username and a pin'}
+          renderHeader={() => 'Create a new Item'}
           renderFooter={() =>
-            getFieldError('username') && getFieldError('username').join(',')}
+            getFieldError('title') && getFieldError('title').join(',')}
         >
           <InputItem
-            {...getFieldProps('username', {
+            {...getFieldProps('title', {
               rules: [
-                { required: true, message: 'Please input username' },
-                { validator: this.validateAccount }
+                { required: true, message: 'Please input an item title' },
+                { validator: this.validateTitle }
               ]
             })}
             clear
-            error={!!getFieldError('username')}
+            error={!!getFieldError('title')}
             onErrorClick={() => {
-              alert(getFieldError('username').join('、'))
+              alert(getFieldError('title').join('、'))
             }}
-            placeholder='please input username'
+            placeholder='Please input an item title'
           >
-            Username
-          </InputItem>
-          <InputItem {...getFieldProps('pin')} placeholder='please input pin'>
-            Pin
+            Title
           </InputItem>
 
           <Item>
@@ -80,4 +75,4 @@ class Auth extends React.Component {
   }
 }
 
-export default createForm()(Auth)
+export default createForm()(CreateItem)
