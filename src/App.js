@@ -42,6 +42,12 @@ class App extends Component {
     this.saveStateToLocalStorage()
   }
 
+  componentWillUpdate (props, nextProps) {
+    setTimeout(() => {
+      console.log(this.fetchItems(nextProps))
+    }, 600)
+  }
+
   hydrateStateWithLocalStorage () {
     for (let key in this.state) {
       if (localStorage.hasOwnProperty(key)) {
@@ -107,6 +113,21 @@ class App extends Component {
       },
       { text: 'OK', onPress: () => this.handleReset() }
     ])
+  }
+
+  fetchItems (props) {
+    this.database
+      .ref(
+        'users/' +
+          props.auth.name +
+          props.auth.pin +
+          '/categories/' +
+          props.activeCategory +
+          '/items/'
+      )
+      .on('value', snapshot => {
+        return snapshot.val()
+      })
   }
 
   handleCategoryAdd (categoryName) {
@@ -226,6 +247,7 @@ class App extends Component {
             {activeCategory &&
               <div>
                 <CategoryItemList
+                  auth={this.state.auth}
                   activeCategory={activeCategory}
                   handleItemAdd={this.handleItemAdd.bind(this)}
                 />
