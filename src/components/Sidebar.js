@@ -1,11 +1,11 @@
 import React from 'react'
 import { List, Button } from 'antd-mobile'
+import database from '../firebase'
 
 const Sidebar = props => {
   let {
     name,
     pin,
-    database,
     showAddCategory,
     showResetConfirmation,
     setActiveCategory

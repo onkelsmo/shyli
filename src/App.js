@@ -4,68 +4,18 @@ import Auth from './components/Auth'
 import Sidebar from './components/Sidebar'
 import CategoryItemList from './components/CategoryItemList'
 import './App.css'
-import firebase from 'firebase'
-import 'firebase/database'
-import { DB_CONFIG } from './Config'
+import database from './firebase'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { doAuth } from './actions/doAuth'
+import { handleCategoryAdd } from './actions/handleCategoryAdd'
+import { handleReset } from './actions/handleReset'
 
 class App extends Component {
   state = {
     open: false,
-    auth: {
-      name: '',
-      pin: ''
-    },
-    categories: [],
     activeCategory: null,
     items: {}
-  }
-
-  constructor () {
-    super()
-    this.app = firebase.initializeApp(DB_CONFIG)
-    this.database = this.app.database()
-  }
-
-  componentDidMount () {
-    this.hydrateStateWithLocalStorage()
-    window.addEventListener(
-      'beforeunload',
-      this.saveStateToLocalStorage.bind(this)
-    )
-  }
-
-  componentWillUnmount () {
-    window.removeEventListener(
-      'beforeunload',
-      this.saveStateToLocalStorage.bind(this)
-    )
-    this.saveStateToLocalStorage()
-  }
-
-  componentWillUpdate (props, nextProps) {
-    setTimeout(() => {
-      console.log(this.fetchItems(nextProps))
-    }, 600)
-  }
-
-  hydrateStateWithLocalStorage () {
-    for (let key in this.state) {
-      if (localStorage.hasOwnProperty(key)) {
-        let value = localStorage.getItem(key)
-        try {
-          value = JSON.parse(value)
-          this.setState({ [key]: value })
-        } catch (e) {
-          this.setState({ [key]: value })
-        }
-      }
-    }
-  }
-
-  saveStateToLocalStorage () {
-    for (let key in this.state) {
-      localStorage.setItem(key, JSON.stringify(this.state[key]))
-    }
   }
 
   onOpenChange = (...args) => {
@@ -131,52 +81,22 @@ class App extends Component {
   }
 
   handleCategoryAdd (categoryName) {
-    let categoriesArray = this.state.categories
-    categoriesArray.push(categoryName)
-    this.setState({ categories: categoriesArray })
-
-    firebase
-      .database()
-      .ref(
-        'users/' +
-          this.state.auth.name +
-          this.state.auth.pin +
-          '/categories/' +
-          categoryName
-      )
-      .set({
-        name: categoryName
-      })
+    this.props.handleCategoryAdd(
+      categoryName,
+      this.props.auth.username,
+      this.props.auth.pin
+    )
   }
 
-  handleAuth (props) {
-    this.setState({
-      auth: {
-        name: props.username,
-        pin: props.pin
-      }
-    })
-
-    firebase.database().ref('users/' + props.username + props.pin).set({
-      name: props.username,
-      pin: props.pin
-    })
+  handleAuth (credentials) {
+    this.props.doAuth(credentials.username, credentials.pin)
   }
 
   handleReset () {
-    firebase
-      .database()
-      .ref('users/' + this.state.auth.name + this.state.auth.pin)
-      .set(null)
+    this.props.handleReset(this.props.auth.username, this.props.auth.pin)
 
     this.setState({
-      open: false,
-      auth: {
-        name: '',
-        pin: ''
-      },
-      categories: [],
-      activeCategory: null
+      open: false
     })
   }
 
@@ -187,8 +107,7 @@ class App extends Component {
       items: itemsObject
     })
 
-    firebase
-      .database()
+    this.database()
       .ref(
         'users/' +
           this.state.auth.name +
@@ -204,7 +123,9 @@ class App extends Component {
   }
 
   render () {
-    let isAuth = this.state.auth.name !== '' && this.state.auth.pin !== ''
+    console.log(this.props)
+
+    let isAuth = this.props.auth.username !== '' && this.props.auth.pin !== ''
     let activeCategory = this.state.activeCategory
 
     return (
@@ -225,9 +146,8 @@ class App extends Component {
             }}
             sidebar={
               <Sidebar
-                name={this.state.auth.name}
-                pin={this.state.auth.pin}
-                database={this.database}
+                name={this.props.auth.username}
+                pin={this.props.auth.pin}
                 showResetConfirmation={this.showResetConfirmation.bind(this)}
                 showAddCategory={this.showAddCategory.bind(this)}
                 setActiveCategory={this.setActiveCategory.bind(this)}
@@ -238,7 +158,7 @@ class App extends Component {
           >
             {!activeCategory &&
               <div>
-                Hello {this.state.auth.name}
+                Hello {this.props.auth.username}
                 <WhiteSpace />
                 and thank you for using shyli :-)
                 <WhiteSpace />
@@ -253,9 +173,36 @@ class App extends Component {
                 />
               </div>}
           </Drawer>}
+        {/* <ul>
+          {this.props.items.map(item => (
+            <li key={item.id}>
+              {item.title}
+            </li>
+          ))}
+          {' '}
+        </ul> */}
       </div>
     )
   }
 }
 
-export default App
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+    // items: state
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(
+    {
+      doAuth,
+      handleCategoryAdd,
+      handleReset
+      // getItems
+    },
+    dispatch
+  )
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
