@@ -1,4 +1,4 @@
-import { DO_AUTH } from '../types'
+import { DO_AUTH, LOAD } from '../types'
 
 const initialSate = {
   username: '',
@@ -7,6 +7,12 @@ const initialSate = {
 
 export default function doAuth (state = initialSate, action = {}) {
   switch (action.type) {
+    case LOAD:
+      if (typeof action.payload.auth !== 'undefined') {
+        action.payload.auth.loaded = true
+        return action.payload.auth
+      }
+      return Object.assign({}, state, { loaded: true })
     case DO_AUTH:
       return Object.assign({}, state, {
         username: action.username,

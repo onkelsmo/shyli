@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux'
 import { doAuth } from './actions/doAuth'
 import { handleCategoryAdd } from './actions/handleCategoryAdd'
 import { handleReset } from './actions/handleReset'
+import { fetchCategories } from './actions/fetchCategories'
 
 class App extends Component {
   state = {
@@ -85,6 +86,7 @@ class App extends Component {
       this.props.auth.username,
       this.props.auth.pin
     )
+    this.props.fetchCategories(this.props.auth.username, this.props.auth.pin)
   }
 
   handleAuth (credentials) {
@@ -145,8 +147,7 @@ class App extends Component {
             }}
             sidebar={
               <Sidebar
-                name={this.props.auth.username}
-                pin={this.props.auth.pin}
+                fetchedCategories={this.props.categories}
                 showResetConfirmation={this.showResetConfirmation.bind(this)}
                 showAddCategory={this.showAddCategory.bind(this)}
                 setActiveCategory={this.setActiveCategory.bind(this)}
@@ -187,7 +188,9 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    localStorageStore: state.localStorageStore,
+    auth: state.auth,
+    categories: state.fetchCategories
     // items: state
   }
 }
@@ -197,7 +200,8 @@ const mapDispatchToProps = dispatch => {
     {
       doAuth,
       handleCategoryAdd,
-      handleReset
+      handleReset,
+      fetchCategories
       // getItems
     },
     dispatch

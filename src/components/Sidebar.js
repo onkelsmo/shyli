@@ -1,34 +1,31 @@
 import React from 'react'
 import { List, Button } from 'antd-mobile'
-import database from '../firebase'
 
 const Sidebar = props => {
   let {
-    name,
-    pin,
     showAddCategory,
     showResetConfirmation,
-    setActiveCategory
+    setActiveCategory,
+    fetchedCategories
   } = props
-
-  let fetchedCategories = {}
-  database.ref('users/' + name + pin + '/categories/').on('value', snapshot => {
-    fetchedCategories = snapshot.val()
-  })
 
   return (
     <List renderHeader={() => 'Categories'}>
       {fetchedCategories &&
-        Object.keys(fetchedCategories).map((i, index) => {
-          return (
-            <List.Item
-              key={index}
-              thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-              onClick={setActiveCategory.bind(null, i)}
-            >
-              {i}
-            </List.Item>
-          )
+        Object.keys(fetchedCategories).map(index => {
+          if (index !== 'loaded') {
+            return (
+              <List.Item
+                key={index}
+                thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
+                onClick={setActiveCategory.bind(null, index)}
+              >
+                {fetchedCategories[index].name}
+              </List.Item>
+            )
+          } else {
+            return null
+          }
         })}
       <Button className='button-add' onClick={showAddCategory.bind(this)}>
         New Category
