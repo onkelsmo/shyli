@@ -18,7 +18,10 @@ const Sidebar = props => {
               <List.Item
                 key={index}
                 thumb='https://zos.alipayobjects.com/rmsportal/eOZidTabPoEbPeU.png'
-                onClick={setActiveCategory.bind(null, index)}
+                onClick={setActiveCategory.bind(
+                  null,
+                  fetchedCategories[index].name
+                )}
               >
                 {fetchedCategories[index].name}
               </List.Item>

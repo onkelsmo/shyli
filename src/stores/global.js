@@ -6,6 +6,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { LOCAL_STORAGE_LIFETIME_SET, LOAD, RESET } from '../types'
 import auth from './auth'
 import fetchCategories from './categories'
+import fetchItems from './items'
 
 const engine = createEngine('local-storage-0')
 const STORAGE_LIFETIME = 600
@@ -32,7 +33,8 @@ function localStorageReducer (
 const appReducer = combineReducers({
   localStorageStore: localStorageReducer,
   auth,
-  fetchCategories
+  fetchCategories,
+  fetchItems
 })
 
 const rootReducer = (state, action) => {

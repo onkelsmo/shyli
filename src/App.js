@@ -10,6 +10,8 @@ import { doAuth } from './actions/doAuth'
 import { handleCategoryAdd } from './actions/handleCategoryAdd'
 import { handleReset } from './actions/handleReset'
 import { fetchCategories } from './actions/fetchCategories'
+import { fetchItems } from './actions/fetchItems'
+import { handleItemAdd } from './actions/handleItemAdd'
 
 class App extends Component {
   state = {
@@ -24,6 +26,11 @@ class App extends Component {
 
   setActiveCategory (categoryName) {
     this.setState({ open: false, activeCategory: categoryName })
+    this.props.fetchItems(
+      categoryName,
+      this.props.auth.username,
+      this.props.auth.pin
+    )
   }
 
   showAddCategory () {
@@ -33,9 +40,7 @@ class App extends Component {
       [
         {
           text: 'Close',
-          onPress: () => {
-            // this.setState({ open: false })
-          }
+          onPress: () => {}
         },
         {
           text: 'Add',
@@ -65,21 +70,6 @@ class App extends Component {
     ])
   }
 
-  fetchItems (props) {
-    this.database
-      .ref(
-        'users/' +
-          props.auth.name +
-          props.auth.pin +
-          '/categories/' +
-          props.activeCategory +
-          '/items/'
-      )
-      .on('value', snapshot => {
-        return snapshot.val()
-      })
-  }
-
   handleCategoryAdd (categoryName) {
     this.props.handleCategoryAdd(
       categoryName,
@@ -102,25 +92,17 @@ class App extends Component {
   }
 
   handleItemAdd (title, category) {
-    let itemsObject = this.state.items
-    itemsObject.category = { item: title }
-    this.setState({
-      items: itemsObject
-    })
-
-    this.database()
-      .ref(
-        'users/' +
-          this.state.auth.name +
-          this.state.auth.pin +
-          '/categories/' +
-          category +
-          '/items/' +
-          title
-      )
-      .set({
-        title: title
-      })
+    this.props.handleItemAdd(
+      title,
+      category,
+      this.props.auth.username,
+      this.props.auth.pin
+    )
+    this.props.fetchItems(
+      category,
+      this.props.auth.username,
+      this.props.auth.pin
+    )
   }
 
   render () {
@@ -167,9 +149,9 @@ class App extends Component {
             {activeCategory &&
               <div>
                 <CategoryItemList
-                  auth={this.state.auth}
                   activeCategory={activeCategory}
                   handleItemAdd={this.handleItemAdd.bind(this)}
+                  items={this.props.items}
                 />
               </div>}
           </Drawer>}
@@ -190,8 +172,8 @@ const mapStateToProps = state => {
   return {
     localStorageStore: state.localStorageStore,
     auth: state.auth,
-    categories: state.fetchCategories
-    // items: state
+    categories: state.fetchCategories,
+    items: state.fetchItems
   }
 }
 
@@ -201,8 +183,9 @@ const mapDispatchToProps = dispatch => {
       doAuth,
       handleCategoryAdd,
       handleReset,
-      fetchCategories
-      // getItems
+      fetchCategories,
+      fetchItems,
+      handleItemAdd
     },
     dispatch
   )

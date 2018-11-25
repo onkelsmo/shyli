@@ -3,23 +3,7 @@ import ReactDOM from 'react-dom'
 import { TabBar, ListView } from 'antd-mobile'
 import CreateItem from './CreateItem'
 
-const data = [
-  {
-    img: 'https://zos.alipayobjects.com/rmsportal/dKbkpPXKfvZzWCM.png',
-    title: 'Meet hotel',
-    des: '不是所有的兼职汪都需要风吹日晒'
-  },
-  {
-    img: 'https://zos.alipayobjects.com/rmsportal/XmwCzSeJiqpkuMB.png',
-    title: "McDonald's invites you",
-    des: '不是所有的兼职汪都需要风吹日晒'
-  },
-  {
-    img: 'https://zos.alipayobjects.com/rmsportal/hfVtzEhPzTUewPm.png',
-    title: 'Eat the week',
-    des: '不是所有的兼职汪都需要风吹日晒'
-  }
-]
+let data = []
 const NUM_SECTIONS = 5
 const NUM_ROWS_PER_SECTION = 5
 let pageIndex = 0
@@ -49,7 +33,12 @@ class CategoryItemListView extends React.Component {
   constructor (props) {
     super(props)
 
-    // const data = []
+    Object.keys(props.items).map(index => {
+      if (index !== 'loaded') {
+        data.push({ img: '', title: props.items[index].title, des: '' })
+      }
+      return null
+    })
 
     const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID]
     const getRowData = (dataBlob, sectionID, rowID) => dataBlob[rowID]
@@ -145,17 +134,13 @@ class CategoryItemListView extends React.Component {
               <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>
                 {obj.des}
               </div>
-              <div>
-                <span style={{ fontSize: '30px', color: '#FF6E27' }}>35</span>
-                ¥
-                {' '}
-                {rowID}
-              </div>
             </div>
           </div>
         </div>
       )
     }
+
+    console.log(this.state.dataSource)
 
     return (
       <ListView
@@ -181,8 +166,6 @@ class CategoryItemListView extends React.Component {
           console.log('scroll')
         }}
         scrollRenderAheadDistance={500}
-        onEndReached={this.onEndReached}
-        onEndReachedThreshold={10}
       />
     )
   }
@@ -254,7 +237,10 @@ class CategoryItemList extends React.Component {
             }}
             data-seed='logId'
           >
-            <CategoryItemListView activeCategory={this.props.activeCategory} />
+            <CategoryItemListView
+              activeCategory={this.props.activeCategory}
+              items={this.props.items}
+            />
           </TabBar.Item>
           <TabBar.Item
             icon={
