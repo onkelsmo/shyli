@@ -5,18 +5,19 @@ import CreateItem from './CreateItem'
 let data = []
 
 class CategoryItemListView extends React.Component {
-  constructor (props) {
-    super(props)
-
-    Object.keys(props.items).map(index => {
+  componentWillUpdate (nextProps) {
+    data = []
+    Object.keys(nextProps.items).map(index => {
       if (index !== 'loaded') {
-        data.push({ img: '', title: props.items[index].title, des: '' })
+        data.push({ img: '', title: nextProps.items[index].title, des: '' })
       }
       return null
     })
   }
 
   render () {
+    console.log(data)
+
     return (
       <List renderHeader={() => <span>{this.props.activeCategory}</span>}>
         {data &&
@@ -111,7 +112,8 @@ class CategoryItemList extends React.Component {
                 style={{
                   width: '22px',
                   height: '22px',
-                  background: 'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  21px 21px no-repeat'
+                  background:
+                    'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  21px 21px no-repeat'
                 }}
               />
             }
@@ -120,7 +122,8 @@ class CategoryItemList extends React.Component {
                 style={{
                   width: '22px',
                   height: '22px',
-                  background: 'url(https://zos.alipayobjects.com/rmsportal/iSrlOTqrKddqbOmlvUfq.svg) center center /  21px 21px no-repeat'
+                  background:
+                    'url(https://zos.alipayobjects.com/rmsportal/iSrlOTqrKddqbOmlvUfq.svg) center center /  21px 21px no-repeat'
                 }}
               />
             }
@@ -144,7 +147,8 @@ class CategoryItemList extends React.Component {
                 style={{
                   width: '22px',
                   height: '22px',
-                  background: 'url(https://gw.alipayobjects.com/zos/rmsportal/BTSsmHkPsQSPTktcXyTV.svg) center center /  21px 21px no-repeat'
+                  background:
+                    'url(https://gw.alipayobjects.com/zos/rmsportal/BTSsmHkPsQSPTktcXyTV.svg) center center /  21px 21px no-repeat'
                 }}
               />
             }
@@ -153,7 +157,8 @@ class CategoryItemList extends React.Component {
                 style={{
                   width: '22px',
                   height: '22px',
-                  background: 'url(https://gw.alipayobjects.com/zos/rmsportal/ekLecvKBnRazVLXbWOnE.svg) center center /  21px 21px no-repeat'
+                  background:
+                    'url(https://gw.alipayobjects.com/zos/rmsportal/ekLecvKBnRazVLXbWOnE.svg) center center /  21px 21px no-repeat'
                 }}
               />
             }

@@ -26,11 +26,8 @@ class App extends Component {
 
   setActiveCategory (categoryName) {
     this.setState({ open: false, activeCategory: categoryName })
-    this.props.fetchItems(
-      categoryName,
-      this.props.auth.username,
-      this.props.auth.pin
-    )
+    const { username, pin } = this.props.auth
+    this.props.fetchItems(categoryName, username, pin)
   }
 
   showAddCategory () {
@@ -117,7 +114,7 @@ class App extends Component {
           shyli
         </NavBar>
         {!isAuth && <Auth handleAuth={this.handleAuth.bind(this)} />}
-        {isAuth &&
+        {isAuth && (
           <Drawer
             className='my-drawer'
             style={{ minHeight: document.documentElement.clientHeight }}
@@ -138,23 +135,27 @@ class App extends Component {
             open={this.state.open}
             onOpenChange={this.onOpenChange}
           >
-            {!activeCategory &&
+            {!activeCategory && (
               <div>
                 Hello {this.props.auth.username}
                 <WhiteSpace />
                 and thank you for using shyli :-)
                 <WhiteSpace />
-                Now let's begin. Open the drawer on the left and start adding categories!
-              </div>}
-            {activeCategory &&
+                Now let's begin. Open the drawer on the left and start adding
+                categories!
+              </div>
+            )}
+            {activeCategory && (
               <div>
                 <CategoryItemList
                   activeCategory={activeCategory}
                   handleItemAdd={this.handleItemAdd.bind(this)}
                   items={this.props.items}
                 />
-              </div>}
-          </Drawer>}
+              </div>
+            )}
+          </Drawer>
+        )}
         {/* <ul>
           {this.props.items.map(item => (
             <li key={item.id}>
@@ -191,4 +192,7 @@ const mapDispatchToProps = dispatch => {
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)

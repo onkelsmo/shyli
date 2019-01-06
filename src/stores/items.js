@@ -11,7 +11,9 @@ export default function fetchItems (state = initialSate, action = {}) {
       }
       return Object.assign({}, state, { loaded: true })
     case FETCH_ITEMS:
-      return Object.assign({}, state, action.fetchedItems)
+      // return Object.assign({}, state, action.fetchedItems)
+      console.log(action.fetchedItems)
+      return action.fetchedItems
     default:
       return state
   }
