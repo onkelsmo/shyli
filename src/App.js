@@ -88,10 +88,11 @@ class App extends Component {
     })
   }
 
-  handleItemAdd (title, category) {
+  handleItemAdd (title, category, image) {
     this.props.handleItemAdd(
       title,
       category,
+      image,
       this.props.auth.username,
       this.props.auth.pin
     )

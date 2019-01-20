@@ -1,16 +1,24 @@
 import React from 'react'
-import { List, InputItem, Button } from 'antd-mobile'
+import { List, InputItem, Button, ImagePicker } from 'antd-mobile'
 import { createForm } from 'rc-form'
+import { database } from 'firebase'
 
 const Item = List.Item
+const data = []
 
 class CreateItem extends React.Component {
+  state = {
+    files: data,
+    multiple: false
+  }
+
   onSubmit = () => {
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
         this.props.handleItemAdd(
           this.props.form.getFieldsValue().title,
-          this.props.activeCategory
+          this.props.activeCategory,
+          this.state.files[0]
         )
         this.props.handleItemSubmit()
         this.props.form.resetFields()
@@ -20,6 +28,13 @@ class CreateItem extends React.Component {
 
   onReset = () => {
     this.props.form.resetFields()
+  }
+
+  onChange = (files, type, index) => {
+    console.log(files, type, index)
+    this.setState({
+      files
+    })
   }
 
   validateTitle = (rule, value, callback) => {
@@ -32,6 +47,7 @@ class CreateItem extends React.Component {
 
   render () {
     const { getFieldProps, getFieldError } = this.props.form
+    const { files, multiple } = this.state
 
     return (
       <form>
@@ -57,6 +73,13 @@ class CreateItem extends React.Component {
           >
             Title
           </InputItem>
+          <ImagePicker
+            files={files}
+            onChange={this.onChange}
+            selectable={files.length < 1}
+            multiple={multiple}
+            length={1}
+          />
 
           <Item>
             <Button type='primary' size='small' inline onClick={this.onSubmit}>

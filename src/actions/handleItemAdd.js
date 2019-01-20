@@ -6,7 +6,10 @@ export const itemAdded = itemName => ({
   itemName
 })
 
-export const handleItemAdd = (itemName, categoryName, username, pin) => {
+export const handleItemAdd = (itemName, categoryName, image, username, pin) => {
+  console.log(image)
+  // TODO: upload image and save path in database!
+
   return dispatch => {
     database
       .ref(
