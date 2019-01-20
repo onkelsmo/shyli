@@ -16,8 +16,6 @@ class CategoryItemListView extends React.Component {
   }
 
   render () {
-    console.log(data)
-
     return (
       <List renderHeader={() => <span>{this.props.activeCategory}</span>}>
         {data &&

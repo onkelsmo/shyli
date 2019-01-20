@@ -13,6 +13,7 @@ class CreateItem extends React.Component {
           this.props.activeCategory
         )
         this.props.handleItemSubmit()
+        this.props.form.resetFields()
       }
     })
   }
@@ -37,7 +38,8 @@ class CreateItem extends React.Component {
         <List
           renderHeader={() => 'Create a new Item'}
           renderFooter={() =>
-            getFieldError('title') && getFieldError('title').join(',')}
+            getFieldError('title') && getFieldError('title').join(',')
+          }
         >
           <InputItem
             {...getFieldProps('title', {
