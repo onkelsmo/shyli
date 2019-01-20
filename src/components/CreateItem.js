@@ -1,7 +1,6 @@
 import React from 'react'
 import { List, InputItem, Button, ImagePicker } from 'antd-mobile'
 import { createForm } from 'rc-form'
-import { database } from 'firebase'
 
 const Item = List.Item
 const data = []
